@@ -17,6 +17,8 @@ class RepoDetailsViewController: UIViewController, UITableViewDelegate, UITableV
         super.viewDidLoad()
         contributorsTableView.delegate = self
         contributorsTableView.dataSource = self
+        
+        
         if let repository = repository {
             nameLabel.text = repository.name
             descriptionLabel.text = repository.description
@@ -38,6 +40,7 @@ class RepoDetailsViewController: UIViewController, UITableViewDelegate, UITableV
         if let url = URL(string: sender.title(for: .normal) ?? "") {
             let webViewController = WebViewController()
             webViewController.url = url
+//            self.present(webViewController, animated: true)
             navigationController?.pushViewController(webViewController, animated: true)
         }
     }

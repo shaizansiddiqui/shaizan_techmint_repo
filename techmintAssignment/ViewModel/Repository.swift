@@ -11,17 +11,23 @@ import Foundation
 class GitHubAPI {
     private let baseURL = "https://api.github.com"
     
-    func searchRepositories(query: String, completion: @escaping ([Repository]) -> Void) {
-        let urlString = "\(baseURL)/search/repositories?q=\(query)&per_page=10"
+    func searchRepositories(query: String, page: Int, completion: @escaping ([Repository]) -> Void) {
+        let urlString = "\(baseURL)/search/repositories?q=\(query)&per_page=10&page=\(page)"
         guard let url = URL(string: urlString) else { return }
         
         URLSession.shared.dataTask(with: url) { data, response, error in
+            if let error = error {
+                print("Failed to fetch data: \(error)")
+                return
+            }
+            
             guard let data = data else { return }
+            
             do {
                 let result = try JSONDecoder().decode(SearchResult.self, from: data)
                 completion(result.items)
             } catch {
-                print(error)
+                print("Failed to decode JSON: \(error)")
             }
         }.resume()
     }
@@ -31,12 +37,18 @@ class GitHubAPI {
         guard let url = URL(string: urlString) else { return }
         
         URLSession.shared.dataTask(with: url) { data, response, error in
+            if let error = error {
+                print("Failed to fetch data: \(error)")
+                return
+            }
+            
             guard let data = data else { return }
+            
             do {
                 let contributors = try JSONDecoder().decode([Contributor].self, from: data)
                 completion(contributors)
             } catch {
-                print(error)
+                print("Failed to decode JSON: \(error)")
             }
         }.resume()
     }
