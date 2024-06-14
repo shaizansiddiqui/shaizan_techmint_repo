@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import CoreData
 
 class ViewController: UIViewController, UISearchBarDelegate, UITableViewDelegate, UITableViewDataSource {
     @IBOutlet weak var mytableView: UITableView!
@@ -18,6 +19,7 @@ class ViewController: UIViewController, UISearchBarDelegate, UITableViewDelegate
     var currentPage = 1
     var isLoading = false
     var query = ""
+    var isSearching = false
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -30,8 +32,7 @@ class ViewController: UIViewController, UISearchBarDelegate, UITableViewDelegate
         self.view.bringSubviewToFront(indicator)
         indicator.hidesWhenStopped = true
         
-            // Fetch saved repositories
-//        fetchSavedRepositories()
+        self.fetchSavedRepositories()
     }
     
     func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
@@ -40,6 +41,7 @@ class ViewController: UIViewController, UISearchBarDelegate, UITableViewDelegate
         self.currentPage = 1
         self.repositories = []
         self.mytableView.reloadData()
+        isSearching = true
         loadRepositories(query: query, page: currentPage)
     }
     
@@ -53,8 +55,52 @@ class ViewController: UIViewController, UISearchBarDelegate, UITableViewDelegate
                 self.isLoading = false
                 self.mytableView.reloadData()
                 self.indicator.stopAnimating()
+                self.saveItems()
             }
         }
+    }
+    
+    func saveItems(){
+        let items = Array(repositories.prefix(15))
+        
+        
+        
+        items.forEach { item in
+            let appdelegate = UIApplication.shared.delegate as! AppDelegate
+            let context = appdelegate.persistentContainer.viewContext
+            let table = NSEntityDescription.insertNewObject(forEntityName: "RepositoryEntity", into: context)
+            table.setValue(item.fullName, forKey: "fullName")
+            table.setValue(item.name, forKey: "name")
+            table.setValue(item.owner.avatarUrl, forKey: "avatarUrl")
+            table.setValue(item.htmlUrl, forKey: "htmlUrl")
+            table.setValue(item.description, forKey: "repositoryDescription")
+            table.setValue("\(item.stargazersCount)", forKey: "stargazersCount")
+            
+            do{
+                try context.save()
+            }catch{
+                print("There is a problem in saving data")
+            }
+            
+        }
+        
+    }
+    
+    func fetchSavedRepositories(){
+        
+        guard let appDelegate = UIApplication.shared.delegate as? AppDelegate else { return }
+        let context = appDelegate.persistentContainer.viewContext
+        let fetchRequest: NSFetchRequest<RepositoryEntity> = RepositoryEntity.fetchRequest()
+        
+        do {
+            let savedRepositories = try context.fetch(fetchRequest)
+            repositories = savedRepositories.map { $0.toRepository() }
+            mytableView.reloadData()
+        } catch {
+            print("Failed to fetch repositories: \(error)")
+        }
+       
+        
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -92,11 +138,29 @@ class ViewController: UIViewController, UISearchBarDelegate, UITableViewDelegate
         if position > (contentHeight - 100 - tableViewHeight) {
             guard !isLoading else { return }
             currentPage += 1
-            loadRepositories(query: query, page: currentPage)
+            if isSearching{
+                loadRepositories(query: query, page: currentPage)
+            }
+            
         }
     }
     
     
 
 }
+
+
+extension RepositoryEntity {
+    func toRepository() -> Repository {
+        let owner = Owner(avatarUrl: self.avatarUrl ?? "")
+        let stars = Int(self.stargazersCount ?? "0")
+        return Repository(name: self.name ?? "",
+                          fullName: self.fullName ?? "",
+                          description: self.description,
+                          stargazersCount: stars ?? 0,
+                          htmlUrl: self.htmlUrl ?? "",
+                          owner: owner)
+    }
+}
+
 
