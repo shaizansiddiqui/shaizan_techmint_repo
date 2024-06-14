@@ -9,6 +9,14 @@ class RepoDetailsViewController: UIViewController, UITableViewDelegate, UITableV
     @IBOutlet weak var projectLinkButton: UIButton!
     @IBOutlet weak var contributorsTableView: UITableView!
     
+    lazy var imageViews: UIImageView = {
+        let imgView = UIImageView()
+        imgView.translatesAutoresizingMaskIntoConstraints = false
+        imgView.contentMode = .scaleAspectFill
+        imgView.clipsToBounds = true
+        imgView.image = UIImage(named: "appbackground")
+        return imgView
+    }()
     var repository: Repository?
     var contributors = [Contributor]()
     let api = GitHubAPI()
@@ -17,7 +25,15 @@ class RepoDetailsViewController: UIViewController, UITableViewDelegate, UITableV
         super.viewDidLoad()
         contributorsTableView.delegate = self
         contributorsTableView.dataSource = self
-        
+        view.addSubview(imageViews)
+        view.sendSubviewToBack(imageViews)
+            // Set up constraints
+        NSLayoutConstraint.activate([
+            imageViews.topAnchor.constraint(equalTo: view.topAnchor),
+            imageViews.bottomAnchor.constraint(equalTo: view.bottomAnchor),
+            imageViews.leftAnchor.constraint(equalTo: view.leftAnchor),
+            imageViews.rightAnchor.constraint(equalTo: view.rightAnchor)
+        ])
         
         if let repository = repository {
             nameLabel.text = repository.name

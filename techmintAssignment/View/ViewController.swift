@@ -9,6 +9,16 @@ import UIKit
 import CoreData
 
 class ViewController: UIViewController, UISearchBarDelegate, UITableViewDelegate, UITableViewDataSource {
+    
+    lazy var imageView: UIImageView = {
+        let imgView = UIImageView()
+        imgView.translatesAutoresizingMaskIntoConstraints = false
+        imgView.contentMode = .scaleAspectFill
+        imgView.clipsToBounds = true
+        imgView.image = UIImage(named: "appbackground")
+        return imgView
+    }()
+    
     @IBOutlet weak var mytableView: UITableView!
     
     @IBOutlet weak var searchBar: UISearchBar!
@@ -30,6 +40,16 @@ class ViewController: UIViewController, UISearchBarDelegate, UITableViewDelegate
         indicator.center = self.view.center
         self.view.addSubview(indicator)
         self.view.bringSubviewToFront(indicator)
+            // Add imageView to the view hierarchy
+        view.addSubview(imageView)
+        view.sendSubviewToBack(imageView)
+            // Set up constraints
+        NSLayoutConstraint.activate([
+            imageView.topAnchor.constraint(equalTo: view.topAnchor),
+            imageView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
+            imageView.leftAnchor.constraint(equalTo: view.leftAnchor),
+            imageView.rightAnchor.constraint(equalTo: view.rightAnchor)
+        ])
         indicator.hidesWhenStopped = true
         
         self.fetchSavedRepositories()
@@ -55,6 +75,7 @@ class ViewController: UIViewController, UISearchBarDelegate, UITableViewDelegate
                 self.isLoading = false
                 self.mytableView.reloadData()
                 self.indicator.stopAnimating()
+                self.deleteAllRepositories()
                 self.saveItems()
             }
         }
@@ -62,8 +83,6 @@ class ViewController: UIViewController, UISearchBarDelegate, UITableViewDelegate
     
     func saveItems(){
         let items = Array(repositories.prefix(15))
-        
-        
         
         items.forEach { item in
             let appdelegate = UIApplication.shared.delegate as! AppDelegate
@@ -101,6 +120,21 @@ class ViewController: UIViewController, UISearchBarDelegate, UITableViewDelegate
         }
        
         
+    }
+    
+    func deleteAllRepositories() {
+        guard let appDelegate = UIApplication.shared.delegate as? AppDelegate else { return }
+        let context = appDelegate.persistentContainer.viewContext
+        
+        let fetchRequest: NSFetchRequest<NSFetchRequestResult> = RepositoryEntity.fetchRequest()
+        let deleteRequest = NSBatchDeleteRequest(fetchRequest: fetchRequest)
+        
+        do {
+            try context.execute(deleteRequest)
+            try context.save()
+        } catch {
+            print("Failed to delete repositories: \(error)")
+        }
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
