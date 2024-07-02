@@ -8,7 +8,9 @@
 import UIKit
 import CoreData
 
-class ViewController: UIViewController, UISearchBarDelegate, UITableViewDelegate, UITableViewDataSource {
+class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSource, UISearchResultsUpdating {
+    
+    
     
     lazy var imageView: UIImageView = {
         let imgView = UIImageView()
@@ -20,8 +22,8 @@ class ViewController: UIViewController, UISearchBarDelegate, UITableViewDelegate
     }()
     
     @IBOutlet weak var mytableView: UITableView!
-    
-    @IBOutlet weak var searchBar: UISearchBar!
+    var searchController: UISearchController!
+
     var indicator: UIActivityIndicatorView!
     var repoData:Repository?
     var repositories = [Repository]()
@@ -33,10 +35,21 @@ class ViewController: UIViewController, UISearchBarDelegate, UITableViewDelegate
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        searchBar.delegate = self
+        print("Start.........")
+        let searchResultsController = UITableViewController(style: .plain)
+        searchController = UISearchController(searchResultsController: searchResultsController)
+        
+            // Set the search controller's search results updater
+        searchController.searchResultsUpdater = self
+        searchController.obscuresBackgroundDuringPresentation = false
+        searchController.searchBar.placeholder = "Search"
+        searchController.searchBar.delegate = self
+
+            // Add the search bar to the table view's header
+        mytableView.tableHeaderView = searchController.searchBar
         mytableView.delegate = self
         mytableView.dataSource = self
-        indicator = UIActivityIndicatorView(style: .gray)
+        indicator = UIActivityIndicatorView(style: .large)
         indicator.center = self.view.center
         self.view.addSubview(indicator)
         self.view.bringSubviewToFront(indicator)
@@ -55,20 +68,13 @@ class ViewController: UIViewController, UISearchBarDelegate, UITableViewDelegate
         self.fetchSavedRepositories()
     }
     
-    func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
-        guard let query = searchBar.text else { return }
-        self.query = query
-        self.currentPage = 1
-        self.repositories = []
-        self.mytableView.reloadData()
-        isSearching = true
-        loadRepositories(query: query, page: currentPage)
-    }
     
     func loadRepositories(query: String, page: Int) {
         guard !isLoading else { return }
         isLoading = true
-        indicator.startAnimating()
+        DispatchQueue.main.async { [self] in
+            indicator.startAnimating()
+        }
         api.searchRepositories(query: query, page: page) { repositories in
             DispatchQueue.main.async {
                 self.repositories.append(contentsOf: repositories)
@@ -179,11 +185,30 @@ class ViewController: UIViewController, UISearchBarDelegate, UITableViewDelegate
         }
     }
     
-    
+    func updateSearchResults(for searchController: UISearchController) {
+        
+    }
 
 }
 
-
+extension ViewController: UISearchBarDelegate {
+    func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
+            // Trigger search logic when the Enter key is pressed
+        if let searchText = searchBar.text, !searchText.isEmpty {
+            DispatchQueue.global(qos: .userInitiated).async { [self] in
+                
+                print("text: \(searchText)")
+                self.query = searchText
+                self.currentPage = 1
+                self.repositories = []
+                isSearching = true
+                loadRepositories(query: query, page: currentPage)
+                
+            }
+        }
+        
+    }
+}
 extension RepositoryEntity {
     func toRepository() -> Repository {
         let owner = Owner(avatarUrl: self.avatarUrl ?? "")

@@ -2,7 +2,6 @@
 <document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="21507" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="YiO-l0-tK1">
     <device id="retina6_12" orientation="portrait" appearance="light"/>
     <dependencies>
-        <deployment identifier="iOS"/>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="21505"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="System colors in document resources" minToolsVersion="11.0"/>
@@ -17,25 +16,15 @@
                         <rect key="frame" x="0.0" y="0.0" width="393" height="852"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <searchBar contentMode="redraw" translatesAutoresizingMaskIntoConstraints="NO" id="57K-vR-Fc5">
-                                <rect key="frame" x="0.0" y="103" width="393" height="44"/>
-                                <constraints>
-                                    <constraint firstAttribute="height" constant="44" id="lO6-2L-DI9"/>
-                                </constraints>
-                                <textInputTraits key="textInputTraits"/>
-                                <connections>
-                                    <outlet property="delegate" destination="BYZ-38-t0r" id="fND-s3-qh3"/>
-                                </connections>
-                            </searchBar>
                             <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="-1" estimatedSectionHeaderHeight="-1" sectionFooterHeight="-1" estimatedSectionFooterHeight="-1" translatesAutoresizingMaskIntoConstraints="NO" id="Evj-qI-OqD">
-                                <rect key="frame" x="16" y="147" width="361" height="671"/>
+                                <rect key="frame" x="10" y="103" width="373" height="705"/>
                                 <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <prototypes>
                                     <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="RepoCell" rowHeight="117" id="GWi-jK-kMd">
-                                        <rect key="frame" x="0.0" y="50" width="361" height="117"/>
+                                        <rect key="frame" x="0.0" y="50" width="373" height="117"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="GWi-jK-kMd" id="Hh9-Rk-rWU">
-                                            <rect key="frame" x="0.0" y="0.0" width="361" height="117"/>
+                                            <rect key="frame" x="0.0" y="0.0" width="373" height="117"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                         </tableViewCellContentView>
                                         <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
@@ -47,33 +36,19 @@
                         <viewLayoutGuide key="safeArea" id="6Tk-OE-BBY"/>
                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                         <constraints>
-                            <constraint firstItem="57K-vR-Fc5" firstAttribute="leading" secondItem="6Tk-OE-BBY" secondAttribute="leading" id="1dq-8y-K2u"/>
-                            <constraint firstItem="57K-vR-Fc5" firstAttribute="top" secondItem="6Tk-OE-BBY" secondAttribute="top" id="66t-3g-QrA"/>
-                            <constraint firstItem="57K-vR-Fc5" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="D2Q-cn-hUc"/>
-                            <constraint firstItem="Evj-qI-OqD" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leadingMargin" id="cU1-F2-0ye"/>
-                            <constraint firstItem="Evj-qI-OqD" firstAttribute="centerX" secondItem="57K-vR-Fc5" secondAttribute="centerX" id="ggN-sH-gfk"/>
-                            <constraint firstItem="Evj-qI-OqD" firstAttribute="top" secondItem="57K-vR-Fc5" secondAttribute="bottom" id="ig0-3N-HF5"/>
-                            <constraint firstItem="Evj-qI-OqD" firstAttribute="bottom" secondItem="6Tk-OE-BBY" secondAttribute="bottom" id="mdR-mo-JQf"/>
+                            <constraint firstItem="Evj-qI-OqD" firstAttribute="top" secondItem="6Tk-OE-BBY" secondAttribute="top" id="G12-No-cEw"/>
+                            <constraint firstItem="6Tk-OE-BBY" firstAttribute="bottom" secondItem="Evj-qI-OqD" secondAttribute="bottom" constant="10" id="igG-sd-9Uw"/>
+                            <constraint firstItem="Evj-qI-OqD" firstAttribute="leading" secondItem="6Tk-OE-BBY" secondAttribute="leading" constant="10" id="pE9-lB-Oed"/>
+                            <constraint firstItem="6Tk-OE-BBY" firstAttribute="trailing" secondItem="Evj-qI-OqD" secondAttribute="trailing" constant="10" id="zCz-6x-FJa"/>
                         </constraints>
                     </view>
                     <navigationItem key="navigationItem" id="wep-lm-dy0"/>
                     <connections>
                         <outlet property="mytableView" destination="Evj-qI-OqD" id="qfg-hV-waE"/>
-                        <outlet property="searchBar" destination="57K-vR-Fc5" id="dgS-39-vz7"/>
-                        <outlet property="searchDisplayController" destination="lbl-bx-Wfx" id="D3N-dw-kom"/>
                         <segue destination="JSB-mr-0NS" kind="show" identifier="showRepoDetails" id="4v0-54-I65"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
-                <searchDisplayController id="lbl-bx-Wfx">
-                    <connections>
-                        <outlet property="delegate" destination="BYZ-38-t0r" id="ef6-Ng-dc4"/>
-                        <outlet property="searchBar" destination="57K-vR-Fc5" id="yN0-ww-VHE"/>
-                        <outlet property="searchContentsController" destination="BYZ-38-t0r" id="W3i-0N-h6d"/>
-                        <outlet property="searchResultsDataSource" destination="BYZ-38-t0r" id="65K-TB-8WI"/>
-                        <outlet property="searchResultsDelegate" destination="BYZ-38-t0r" id="fH5-R8-OlA"/>
-                    </connections>
-                </searchDisplayController>
             </objects>
             <point key="canvasLocation" x="1550.3816793893129" y="-27.464788732394368"/>
         </scene>

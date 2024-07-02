@@ -14,7 +14,7 @@ class GitHubAPI {
     func searchRepositories(query: String, page: Int, completion: @escaping ([Repository]) -> Void) {
         let urlString = "\(baseURL)/search/repositories?q=\(query)&per_page=10&page=\(page)"
         guard let url = URL(string: urlString) else { return }
-        
+        print("URL :\(urlString)")
         URLSession.shared.dataTask(with: url) { data, response, error in
             if let error = error {
                 print("Failed to fetch data: \(error)")
